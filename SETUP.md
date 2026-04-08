@@ -14,9 +14,10 @@ Dein persoenlicher KI-Assistent — inspiriert von Iron Mans Jarvis.
 ## Voraussetzungen
 
 - **Windows 10/11**
-- **Python 3.10+**
 - **Google Chrome** (fuer Spracheingabe + Jarvis UI)
 - **Claude Code** installiert
+
+Python, alle Dependencies und Browser-Treiber werden automatisch von Claude Code installiert — du musst nichts manuell einrichten.
 
 ---
 
@@ -41,11 +42,11 @@ Claude Code fragt dich dann nach:
 
 ## Was Claude Code fuer dich einrichtet
 
-### 1. Python-Dependencies
-```
-pip install -r requirements.txt
-playwright install chromium
-```
+### 1. Voraussetzungen installieren
+Claude Code prueft und installiert automatisch:
+- **Python 3.10+** (falls nicht vorhanden, via `winget install Python.Python.3.12`)
+- **Alle Python-Pakete** (`pip install -r requirements.txt`)
+- **Playwright Chromium** (`playwright install chromium`)
 
 ### 2. config.json erstellen
 Claude Code erstellt `config.json` aus `config.example.json` mit deinen echten Daten:
@@ -143,26 +144,36 @@ Zweimal klatschen → Spotify, VS Code, Obsidian, Chrome mit Jarvis starten auto
 
 Wenn ein Nutzer "Richte Jarvis ein" sagt, fuehre folgende Schritte aus:
 
-1. Frage nach: Name, Anrede, Anthropic API Key, ElevenLabs API Key, Spotify-Song (Link), Programme, Website, Stadt, Obsidian-Pfad (optional)
+**Schritt 0 — Voraussetzungen pruefen und installieren:**
+- Pruefe ob Python 3.10+ installiert ist: `python --version`
+- Falls nicht: `winget install Python.Python.3.12` — warte bis fertig, pruefe erneut
+- Pruefe ob Google Chrome installiert ist. Falls nicht, weise den Nutzer an Chrome zu installieren
+- Installiere Python-Pakete: `pip install -r requirements.txt`
+- Installiere Playwright Browser: `playwright install chromium`
 
-2. Installiere Dependencies:
-   ```
-   pip install -r requirements.txt
-   playwright install chromium
-   ```
+**Schritt 1 — Nutzerdaten abfragen:**
+Frage nach: Name, Anrede, Anthropic API Key, ElevenLabs API Key, Spotify-Song (Link), Programme, Website, Stadt, Obsidian-Pfad (optional)
 
-3. Erstelle `config.json` aus `config.example.json` mit den Nutzerdaten
+**Schritt 2 — Config erstellen:**
+Erstelle `config.json` aus `config.example.json` mit den Nutzerdaten. Setze den `workspace_path` auf den aktuellen Ordnerpfad.
 
-4. Finde eine passende ElevenLabs-Stimme:
-   - Liste verfuegbare Stimmen via API
-   - Empfehle eine deutsche Stimme
-   - Trage die Voice ID in die Config ein
+**Schritt 3 — ElevenLabs Stimme einrichten:**
+- Liste verfuegbare Stimmen via ElevenLabs API
+- Empfehle eine deutsche Stimme
+- Trage die Voice ID in die Config ein
 
-5. Passe `scripts/launch-session.ps1` an falls noetig (Pfade)
+**Schritt 4 — Systemprompt anpassen:**
+Passe den Systemprompt in `server.py` → `build_system_prompt()` an:
+- Name des Nutzers eintragen
+- Gewuenschte Anrede eintragen
+- Stadt fuers Wetter anpassen
 
-6. Teste: `python server.py` → http://localhost:8340 oeffnen
+**Schritt 5 — Testen:**
+- Starte den Server: `python server.py`
+- Oeffne http://localhost:8340 in Chrome
+- Pruefe ob Jarvis spricht und antwortet
 
-7. Richte optional den Autostart ein (Task Scheduler)
+**Schritt 6 — Optional: Autostart einrichten (Task Scheduler)**
 
 ---
 

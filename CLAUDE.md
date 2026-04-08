@@ -6,7 +6,21 @@ Dieses Workspace ist **Jarvis** — ein persoenlicher KI-Assistent mit Sprachste
 
 ## Fuer Claude Code: Setup-Modus
 
-Wenn der Nutzer nach dem Setup fragt, folge den Anweisungen in `SETUP.md`. Dort steht alles: was du fragen musst, welche API Keys benoetigt werden, wie der Server eingerichtet wird, und der komplette Systemprompt.
+Wenn der Nutzer nach dem Setup fragt oder "Richte Jarvis ein" sagt, folge den Anweisungen in `SETUP.md`.
+
+**WICHTIG — Pruefe und installiere zuerst alle Voraussetzungen:**
+
+1. **Python**: Pruefe ob Python 3.10+ installiert ist (`python --version`). Falls nicht, installiere es:
+   - Windows: `winget install Python.Python.3.12`
+   - Warte bis die Installation abgeschlossen ist und pruefe erneut
+
+2. **Google Chrome**: Pruefe ob Chrome installiert ist. Falls nicht, weise den Nutzer an Chrome von https://google.com/chrome zu installieren.
+
+3. **pip Dependencies**: `pip install -r requirements.txt`
+
+4. **Playwright Browser**: `playwright install chromium`
+
+Erst NACHDEM alle Voraussetzungen installiert sind, fahre mit dem Setup in `SETUP.md` fort (API Keys abfragen, config.json erstellen, etc.).
 
 ---
 
