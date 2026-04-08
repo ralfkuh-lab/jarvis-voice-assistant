@@ -1,10 +1,5 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(curl -s https://api.elevenlabs.io/v1/convai/agents -H 'xi-api-key: sk_1a68105dde43403dfb2db34c95c59f42d1a3bc8ca8730542')",
-      "Bash(python -c \"import json,sys; print\\(json.dumps\\(json.load\\(sys.stdin\\),indent=2\\)\\)\")",
-      "Bash(powershell -Command ':*)",
-      "Bash(python -c ':*)"
-    ]
+    "allow": []
   }
 }
