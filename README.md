@@ -6,11 +6,9 @@ Built entirely with [Claude Code](https://claude.ai/code) — no code written ma
 
 ---
 
-## Demo
+## Youtube Video
 
-https://github.com/user-attachments/assets/PLACEHOLDER
-
-> *Replace with your demo video or GIF*
+[Demo & Explaination](https://youtu.be/XsceN-hEit4)
 
 ---
 
