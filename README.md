@@ -104,7 +104,10 @@ You (speak) → Chrome Browser (Web Speech API) → FastAPI Server (local)
 3. **Edit `config.json`** with your API keys and preferences:
    ```json
    {
-     "anthropic_api_key": "sk-ant-...",
+     "llm_api_key": "sk-or-...",
+     "llm_base_url": "https://openrouter.ai/api/v1",
+     "llm_chat_model": "xiaomi/mimo-v2-flash",
+     "llm_vision_model": "google/gemini-2.5-flash",
      "elevenlabs_api_key": "sk_...",
      "elevenlabs_voice_id": "YOUR_VOICE_ID",
      "user_name": "Your Name",

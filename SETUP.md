@@ -30,7 +30,7 @@ Oeffne diesen Ordner in VS Code, starte Claude Code, und sag:
 Claude Code fragt dich dann nach:
 
 1. **Dein Name** und wie du angesprochen werden willst (z.B. "Sir")
-2. **Anthropic API Key** — von https://console.anthropic.com (fuer Claude Haiku, das Gehirn)
+2. **LLM API Key + Provider** — welcher LLM-Anbieter? (OpenRouter, OpenAI, Ollama lokal, ...) und welches Modell. Default ist OpenRouter (https://openrouter.ai) mit `xiaomi/mimo-v2-flash` als Chat-Modell und `google/gemini-2.5-flash` fuer Bildschirm-Analyse.
 3. **ElevenLabs API Key** — von https://elevenlabs.io (fuer die Stimme)
 4. **Spotify-Song** — Link zum Song der beim Start spielen soll
 5. **Programme** — welche Apps sollen beim Doppelklatschen starten?
@@ -52,7 +52,10 @@ Claude Code prueft und installiert automatisch:
 Claude Code erstellt `config.json` aus `config.example.json` mit deinen echten Daten:
 ```json
 {
-  "anthropic_api_key": "sk-ant-...",
+  "llm_api_key": "sk-or-...",
+  "llm_base_url": "https://openrouter.ai/api/v1",
+  "llm_chat_model": "xiaomi/mimo-v2-flash",
+  "llm_vision_model": "google/gemini-2.5-flash",
   "elevenlabs_api_key": "sk_...",
   "elevenlabs_voice_id": "VOICE_ID",
   "user_name": "Dein Name",
@@ -84,7 +87,7 @@ Der Systemprompt wird in `server.py` automatisch aus der Config generiert. Er en
 ```
 Mikrofon (Chrome) → Web Speech API → WebSocket → FastAPI Server
                                                       ↓
-                                                Claude Haiku (denkt)
+                                         LLM (denkt, OpenAI-kompatibel)
                                                       ↓
                                     ┌─────────────────┼──────────────────┐
                                     ↓                 ↓                  ↓
@@ -156,7 +159,11 @@ Frage nach:
 - Name (z.B. "Julian")
 - Taetigkeit/Rolle (z.B. "KI-Berater und Automatisierungsexperte") — wird in den Systemprompt eingebaut
 - Gewuenschte Anrede (z.B. "Sir", "Chef", oder einfach Vorname)
-- Anthropic API Key (von https://console.anthropic.com)
+- LLM-Provider-Wahl (Default: OpenRouter) und API Key
+  - OpenRouter: https://openrouter.ai — gibt Zugriff auf viele Modelle unter einem Key
+  - OpenAI: https://platform.openai.com — `llm_base_url` auf `https://api.openai.com/v1`, Modell z.B. `gpt-4o-mini`
+  - Ollama lokal: `llm_base_url` auf `http://localhost:11434/v1`, `llm_api_key` beliebiger String, Modell z.B. `llama3.1`
+  - Jedes andere OpenAI-kompatible Endpoint funktioniert genauso
 - ElevenLabs API Key (von https://elevenlabs.io)
 - Spotify-Song (Link zum Song der beim Start spielen soll)
 - Programme die beim Doppelklatschen starten sollen (z.B. Obsidian, Notion)

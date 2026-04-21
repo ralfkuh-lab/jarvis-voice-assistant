@@ -1,5 +1,8 @@
 {
-  "anthropic_api_key": "YOUR_ANTHROPIC_API_KEY",
+  "llm_api_key": "YOUR_LLM_API_KEY",
+  "llm_base_url": "https://openrouter.ai/api/v1",
+  "llm_chat_model": "xiaomi/mimo-v2-flash",
+  "llm_vision_model": "google/gemini-2.5-flash",
   "elevenlabs_api_key": "YOUR_ELEVENLABS_API_KEY",
   "elevenlabs_voice_id": "YOUR_VOICE_ID",
   "user_name": "YOUR_NAME",

@@ -44,6 +44,12 @@ body {
     animation: pulse-listen 1.5s ease-in-out infinite;
 }
 
+#orb.hearing {
+    background: radial-gradient(circle at 40% 40%, #3ca9ff, #1a5a8c);
+    box-shadow: 0 0 80px rgba(60, 169, 255, 0.9), 0 0 150px rgba(60, 169, 255, 0.3);
+    animation: pulse-listen 0.6s ease-in-out infinite;
+}
+
 #orb.thinking {
     background: radial-gradient(circle at 40% 40%, #c9a227, #8b6914);
     box-shadow: 0 0 60px rgba(201, 162, 39, 0.5), 0 0 120px rgba(201, 162, 39, 0.15);
@@ -98,3 +104,27 @@ body {
     margin-bottom: 16px;
     font-size: 14px;
 }
+
+#mute-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    padding: 8px 14px;
+    font-size: 13px;
+    border-radius: 20px;
+    border: 1px solid #2a3a4c;
+    background: #1a3a5c;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    font-family: inherit;
+}
+
+#mute-btn:hover { background: #2a4a6c; }
+
+#mute-btn.muted {
+    background: #5c1a1a;
+    border-color: #7c2a2a;
+    color: #ffb0b0;
+}
+#mute-btn.muted:hover { background: #6c2a2a; }

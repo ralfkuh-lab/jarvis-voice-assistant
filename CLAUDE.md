@@ -33,9 +33,9 @@ Erst NACHDEM alle Voraussetzungen installiert sind, fahre mit dem Setup in `SETU
 ├── config.json            # Persoenliche Config (gitignored)
 ├── config.example.json    # Template mit Platzhaltern
 ├── requirements.txt       # Python Dependencies
-├── server.py              # FastAPI Backend (Claude Haiku + ElevenLabs TTS)
+├── server.py              # FastAPI Backend (LLM via OpenAI-kompatibles Endpoint + TTS)
 ├── browser_tools.py       # Playwright Browser-Steuerung
-├── screen_capture.py      # Screenshot + Claude Vision
+├── screen_capture.py      # Screenshot + Vision-LLM
 ├── frontend/
 │   ├── index.html         # Jarvis Web-UI
 │   ├── main.js            # Speech Recognition + WebSocket + Audio
@@ -44,3 +44,18 @@ Erst NACHDEM alle Voraussetzungen installiert sind, fahre mit dem Setup in `SETU
     ├── clap-trigger.py    # Doppelklatschen-Erkennung
     └── launch-session.ps1 # Startet alle Apps + Jarvis
 ```
+
+---
+
+## Interessante LLMs fuer den Agent
+
+Kandidaten fuer `llm_chat_model` in `config.json`. Kriterien: **geringe Latenz, ausreichend intelligent, guenstig**. Alle aktuell ueber OpenRouter verfuegbar.
+
+| Modell | Hinweis |
+|---|---|
+| `qwen/qwen3.5-flash-02-23` | Aktuell im Einsatz |
+| Qwen3.6 Flash (35B-A3M) | Nachfolger von 3.5 — noch nicht auf OpenRouter, wird aber erwartet |
+| `xiaomi/mimo-v2-flash` | Solide, war unser Default |
+| `stepfun/step-3.5-flash` | Ebenfalls stark im Flash-Segment — https://openrouter.ai/stepfun/step-3.5-flash |
+
+Stand der Liste: 2026-04. Neue Flash-Versionen bei https://openrouter.ai/models pruefen.
