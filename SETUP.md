@@ -3,7 +3,6 @@
 Dein persoenlicher KI-Assistent — inspiriert von Iron Mans Jarvis.
 
 **Was du bekommst:**
-- Zweimal klatschen → dein komplettes Arbeits-Setup startet
 - Jarvis begruesst dich mit Wetter und deinen Aufgaben
 - Du sprichst frei mit Jarvis — er antwortet per Stimme
 - Jarvis kann deinen Browser steuern (suchen, Seiten oeffnen)
@@ -32,11 +31,8 @@ Claude Code fragt dich dann nach:
 1. **Dein Name** und wie du angesprochen werden willst (z.B. "Sir")
 2. **LLM API Key + Provider** — welcher LLM-Anbieter? (OpenRouter, OpenAI, Ollama lokal, ...) und welches Modell. Default ist OpenRouter (https://openrouter.ai) mit `xiaomi/mimo-v2-flash` als Chat-Modell und `google/gemini-2.5-flash` fuer Bildschirm-Analyse.
 3. **ElevenLabs API Key** — von https://elevenlabs.io (fuer die Stimme)
-4. **Spotify-Song** — Link zum Song der beim Start spielen soll
-5. **Programme** — welche Apps sollen beim Doppelklatschen starten?
-6. **Website** — welche Seite soll im Browser aufgehen?
-7. **Stadt fuers Wetter** — z.B. Hamburg
-8. **Obsidian Vault** — optional, welcher Ordner soll Jarvis kennen?
+4. **Stadt fuers Wetter** — z.B. Hamburg
+5. **Obsidian Vault** — optional, welcher Ordner soll Jarvis kennen?
 
 ---
 
@@ -61,11 +57,7 @@ Claude Code erstellt `config.json` aus `config.example.json` mit deinen echten D
   "user_name": "Dein Name",
   "user_address": "Sir",
   "city": "Hamburg",
-  "workspace_path": "C:\\pfad\\zum\\jarvis_template",
-  "spotify_track": "spotify:track:DEIN_TRACK_ID",
-  "browser_url": "https://deine-website.com",
-  "obsidian_inbox_path": "C:\\pfad\\zum\\obsidian\\inbox",
-  "apps": ["obsidian://open"]
+  "obsidian_inbox_path": "/pfad/zum/obsidian/inbox"
 }
 ```
 
@@ -107,18 +99,6 @@ python server.py
 ```
 Dann http://localhost:8340 in Chrome oeffnen.
 
-### Alles per Doppelklatschen starten
-```
-python scripts\clap-trigger.py
-```
-Zweimal klatschen → Spotify, VS Code, Obsidian, Chrome mit Jarvis starten automatisch.
-
-### Clap Trigger beim Windows-Start
-1. `Win + R` → `taskschd.msc`
-2. Aufgabe erstellen → Trigger: "Bei Anmeldung"
-3. Aktion: `powershell` mit Argument:
-   `-ExecutionPolicy Bypass -WindowStyle Hidden -Command "python C:\DEIN\PFAD\scripts\clap-trigger.py"`
-
 ---
 
 ## Was Jarvis kann
@@ -137,7 +117,6 @@ Zweimal klatschen → Spotify, VS Code, Obsidian, Chrome mit Jarvis starten auto
 |---|---|
 | Jarvis spricht nicht | Pruefen ob Server laeuft (`python server.py`) und Chrome offen ist |
 | "Verbindung verloren" | Alter Server-Prozess laeuft noch → `taskkill /f /im python.exe` und neu starten |
-| Klatschen wird nicht erkannt | Threshold in `clap-trigger.py` anpassen |
 | Browser-Suche geht nicht | `playwright install chromium` ausfuehren |
 | Kein Audio im Browser | Einmal auf die Seite klicken (Chrome Autoplay-Policy) |
 
@@ -165,14 +144,11 @@ Frage nach:
   - Ollama lokal: `llm_base_url` auf `http://localhost:11434/v1`, `llm_api_key` beliebiger String, Modell z.B. `llama3.1`
   - Jedes andere OpenAI-kompatible Endpoint funktioniert genauso
 - ElevenLabs API Key (von https://elevenlabs.io)
-- Spotify-Song (Link zum Song der beim Start spielen soll)
-- Programme die beim Doppelklatschen starten sollen (z.B. Obsidian, Notion)
-- Website die im Browser aufgehen soll
 - Stadt fuers Wetter (z.B. Hamburg)
 - Obsidian Vault Pfad (optional)
 
 **Schritt 2 — Config erstellen:**
-Erstelle `config.json` aus `config.example.json` mit den Nutzerdaten. Setze den `workspace_path` auf den aktuellen Ordnerpfad.
+Erstelle `config.json` aus `config.example.json` mit den Nutzerdaten.
 
 **Schritt 3 — ElevenLabs Stimme einrichten:**
 - Liste verfuegbare Stimmen via ElevenLabs API
@@ -196,8 +172,6 @@ WICHTIG: Pruefe den Prompt sorgfaeltig — "Julian" und "Sir" kommen an mehreren
 - Starte den Server: `python server.py`
 - Oeffne http://localhost:8340 in Chrome
 - Pruefe ob Jarvis spricht und antwortet
-
-**Schritt 6 — Optional: Autostart einrichten (Task Scheduler)**
 
 ---
 

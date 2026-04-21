@@ -1,6 +1,6 @@
 # J.A.R.V.I.S. — Personal AI Voice Assistant
 
-> Double-clap. Jarvis wakes up, greets you with the weather and your tasks, answers your questions with dry British wit, controls your browser, and sees your screen.
+> Jarvis greets you with the weather and your tasks, answers your questions with dry British wit, controls your browser, and sees your screen.
 
 Built entirely with [Claude Code](https://claude.ai/code) — no code written manually.
 
@@ -14,14 +14,12 @@ Built entirely with [Claude Code](https://claude.ai/code) — no code written ma
 
 ## Features
 
-- **Double-Clap Trigger** — Clap twice and your entire workspace launches: Spotify, VS Code, Obsidian, Chrome with Jarvis UI
 - **Voice Conversation** — Speak freely with Jarvis through your microphone. He listens, thinks, and responds with voice
 - **Sarcastic British Butler** — Jarvis speaks German with the personality of Tony Stark's AI: dry, witty, and always one step ahead
 - **Weather & Tasks** — On startup, Jarvis greets you with the current weather and a humorous summary of your open tasks from Obsidian
 - **Browser Automation** — "Search for MiroFish" → Jarvis opens a real browser, navigates to the page, reads the content, and summarizes it for you
-- **Screen Vision** — "What's on my screen?" → Jarvis takes a screenshot, analyzes it with Claude Vision, and describes what he sees
+- **Screen Vision** — "What's on my screen?" → Jarvis takes a screenshot, analyzes it with a vision model, and describes what he sees
 - **World News** — "What's happening in the world?" → Jarvis opens worldmonitor.app and summarizes current global events
-- **Window Snapping** — All launched apps automatically snap into quadrants on your screen
 
 ---
 
@@ -47,9 +45,7 @@ You (speak) → Chrome Browser (Web Speech API) → FastAPI Server (local)
 | Brain | Claude Haiku (Anthropic) | Thinks, decides, formulates responses |
 | Voice | ElevenLabs TTS | Converts text to natural German speech |
 | Browser Control | Playwright | Automates a real browser you can see |
-| Screen Vision | Claude Vision + Pillow | Screenshots and describes your screen |
-| Clap Detection | sounddevice + numpy | Listens for double-clap to launch everything |
-| Window Management | PowerShell + Win32 API | Snaps windows into screen quadrants |
+| Screen Vision | Vision LLM + Pillow | Screenshots and describes your screen |
 
 ---
 
@@ -113,11 +109,7 @@ You (speak) → Chrome Browser (Web Speech API) → FastAPI Server (local)
      "user_name": "Your Name",
      "user_address": "Sir",
      "city": "Hamburg",
-     "workspace_path": "C:\\path\\to\\jarvis-voice-assistant",
-     "spotify_track": "spotify:track:YOUR_TRACK_ID",
-     "browser_url": "https://your-website.com",
-     "obsidian_inbox_path": "C:\\path\\to\\obsidian\\inbox",
-     "apps": ["obsidian://open"]
+     "obsidian_inbox_path": "/path/to/obsidian/inbox"
    }
    ```
 
@@ -139,20 +131,6 @@ You (speak) → Chrome Browser (Web Speech API) → FastAPI Server (local)
 python server.py
 ```
 Then open `http://localhost:8340` in Chrome.
-
-### Start everything with a double-clap
-```bash
-python scripts/clap-trigger.py
-```
-Clap twice → Spotify plays your song, VS Code opens, Obsidian opens, Chrome opens with Jarvis. All windows snap into quadrants.
-
-### Auto-start on Windows login
-1. Open Task Scheduler (`Win + R` → `taskschd.msc`)
-2. Create Task → Trigger: "At log on"
-3. Action: `powershell` with argument:
-   ```
-   -ExecutionPolicy Bypass -Command "python C:\path\to\scripts\clap-trigger.py"
-   ```
 
 ---
 
@@ -183,9 +161,7 @@ jarvis-voice-assistant/
 │   ├── index.html         # Jarvis web UI
 │   ├── main.js            # Speech recognition + WebSocket + audio
 │   └── style.css          # Dark theme with animated orb
-├── scripts/
-│   ├── clap-trigger.py    # Double-clap detection
-│   └── launch-session.ps1 # Launches all apps + window snapping
+├── tts.py                 # TTS backends (Piper local / ElevenLabs)
 ├── CLAUDE.md              # Instructions for Claude Code
 └── SETUP.md               # Detailed setup guide
 ```
@@ -196,16 +172,6 @@ jarvis-voice-assistant/
 
 ### Change Jarvis's personality
 Edit the system prompt in `server.py` → `build_system_prompt()`. The personality, greeting behavior, and action instructions are all defined there.
-
-### Change which apps launch
-Edit `config.json`:
-```json
-{
-  "spotify_track": "spotify:track:YOUR_TRACK_ID",
-  "browser_url": "https://your-website.com",
-  "apps": ["obsidian://open", "slack://"]
-}
-```
 
 ### Change the voice
 Find a voice on [elevenlabs.io](https://elevenlabs.io), copy the Voice ID, and set it in `config.json`:
@@ -222,13 +188,6 @@ Find a voice on [elevenlabs.io](https://elevenlabs.io), copy the Voice ID, and s
 }
 ```
 
-### Adjust clap sensitivity
-In `scripts/clap-trigger.py`:
-```python
-THRESHOLD = 0.15  # Lower = more sensitive
-MAX_GAP = 1.2     # Seconds between claps
-```
-
 ---
 
 ## Troubleshooting
@@ -237,7 +196,6 @@ MAX_GAP = 1.2     # Seconds between claps
 |---------|----------|
 | Jarvis doesn't speak | Check if server is running. Kill old process: `taskkill /f /im python.exe` then restart |
 | "Connection lost" in browser | Old server still running on port 8340. Kill it and restart |
-| Clap not detected | Lower `THRESHOLD` in `clap-trigger.py` (try 0.10) |
 | Browser search fails | Run `playwright install chromium` |
 | No audio in Chrome | Click anywhere on the page first (Chrome autoplay policy) |
 | Jarvis says "Sir planen" instead of "Sie planen" | Update the system prompt grammar rules in `server.py` |
@@ -263,7 +221,6 @@ Claude Code will adapt the PowerShell scripts to shell scripts, adjust paths, an
 - **[ElevenLabs](https://elevenlabs.io)** — Natural text-to-speech (the voice)
 - **[Playwright](https://playwright.dev)** — Browser automation
 - **[Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)** — Browser-native speech recognition
-- **[sounddevice](https://python-sounddevice.readthedocs.io/)** — Audio input for clap detection
 
 ---
 
