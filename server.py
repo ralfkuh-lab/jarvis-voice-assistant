@@ -28,6 +28,7 @@ with open(CONFIG_PATH, "r") as f:
 LLM_API_KEY = config["llm_api_key"]
 LLM_BASE_URL = config.get("llm_base_url", "https://openrouter.ai/api/v1")
 LLM_CHAT_MODEL = config.get("llm_chat_model", "xiaomi/mimo-v2-flash")
+LLM_API_TYPE = config.get("llm_api_type", "openai")
 LLM_VISION_MODEL = config.get("llm_vision_model", "google/gemini-2.5-flash")
 ELEVENLABS_API_KEY = config["elevenlabs_api_key"]
 ELEVENLABS_VOICE_ID = config.get("elevenlabs_voice_id", "rDmv3mOhK6TnhYWckFaD")
@@ -36,7 +37,61 @@ USER_ADDRESS = config.get("user_address", "Chef")
 CITY = config.get("city", "Ahaus")
 TASKS_FILE = config.get("obsidian_inbox_path", "")
 
-llm_client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
+
+class LLMClient:
+    """Unified LLM client supporting OpenAI-compatible and Anthropic APIs."""
+
+    def __init__(self, api_type: str, api_key: str, base_url: str):
+        if api_type == "openai":
+            self._client = OpenAI(api_key=api_key, base_url=base_url)
+        elif api_type == "anthropic":
+            from anthropic import Anthropic
+            self._client = Anthropic(api_key=api_key, base_url=base_url)
+        else:
+            raise ValueError(f"Unknown llm_api_type: {api_type}")
+        self.api_type = api_type
+
+    @property
+    def openai_raw(self):
+        """Return the underlying OpenAI client (for legacy vision calls)."""
+        if self.api_type != "openai":
+            raise RuntimeError("OpenAI client not available in anthropic mode")
+        return self._client
+
+    def chat(self, model: str, messages: list[dict], max_tokens: int = 400) -> str:
+        if self.api_type == "openai":
+            response = self._client.chat.completions.create(
+                model=model,
+                max_tokens=max_tokens,
+                messages=messages,
+            )
+            return response.choices[0].message.content
+
+        # Anthropic API
+        system_msg = ""
+        chat_messages = []
+        for m in messages:
+            if m["role"] == "system":
+                system_msg = m["content"]
+            else:
+                chat_messages.append(m)
+
+        merged = []
+        for m in chat_messages:
+            if merged and merged[-1]["role"] == m["role"]:
+                merged[-1]["content"] += "\n" + m["content"]
+            else:
+                merged.append({"role": m["role"], "content": m["content"]})
+
+        kwargs = {"model": model, "max_tokens": max_tokens, "messages": merged}
+        if system_msg:
+            kwargs["system"] = system_msg
+
+        response = self._client.messages.create(**kwargs)
+        return response.content[0].text
+
+
+llm_client = LLMClient(api_type=LLM_API_TYPE, api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
 http = httpx.AsyncClient(timeout=30)
 
 tts_backend = tts_module.build_backend(config, http)
@@ -211,7 +266,7 @@ async def execute_action(action: dict) -> str:
         return f"Geoeffnet: {p}"
 
     elif t == "SCREEN":
-        return await screen_capture.describe_screen(llm_client, LLM_VISION_MODEL)
+        return await screen_capture.describe_screen(llm_client.openai_raw, LLM_VISION_MODEL)
 
     elif t == "NEWS":
         result = await browser_tools.fetch_news()
@@ -232,13 +287,12 @@ async def process_message(session_id: str, user_text: str, ws: WebSocket):
     conversations[session_id].append({"role": "user", "content": user_text})
     history = conversations[session_id][-16:]
 
-    # LLM call via configured OpenAI-compatible endpoint
-    response = llm_client.chat.completions.create(
+    # LLM call
+    reply = llm_client.chat(
         model=LLM_CHAT_MODEL,
         max_tokens=400,
         messages=[{"role": "system", "content": get_system_prompt()}] + history,
     )
-    reply = response.choices[0].message.content
     print(f"  LLM raw: {reply[:200]}", flush=True)
     spoken_text, action = extract_action(reply)
 
@@ -270,12 +324,11 @@ async def process_message(session_id: str, user_text: str, ws: WebSocket):
 
         # SEARCH, BROWSE, SCREEN — summarize results
         if action_result and "fehlgeschlagen" not in action_result:
-            summary_resp = llm_client.chat.completions.create(
+            summary = llm_client.chat(
                 model=LLM_CHAT_MODEL,
                 max_tokens=250,
                 messages=[{"role": "system", "content": f"Du bist Jarvis. Fasse die folgenden Informationen KURZ auf Deutsch zusammen, maximal 3 Saetze, im Jarvis-Stil. Sprich den Nutzer als {USER_ADDRESS} an. KEINE Tags in eckigen Klammern. KEINE ACTION-Tags."}, {"role": "user", "content": f"Fasse zusammen:\n\n{action_result}"}],
             )
-            summary = summary_resp.choices[0].message.content
             summary, _ = extract_action(summary)
         else:
             summary = f"Das hat leider nicht funktioniert, {USER_ADDRESS}."
